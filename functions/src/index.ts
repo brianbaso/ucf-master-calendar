@@ -35,10 +35,10 @@ app.post('/users/:user/clubs', async (request, response) => {
     if (!userId) throw new Error('User ID is required');
 
     // Get the club info from the request body
-    const { name, description, meetingTimes, website,
+    const { name, coverImage, description, meetingInfo, website,
             instagram, facebook, twitter, email, other } = request.body;
 
-    const data = { name, description, meetingTimes, website,
+    const data = { name, coverImage, description, meetingInfo, website,
               instagram, facebook, twitter, email, other }
 
     // Create a new collection in the firestore db if needed, otherwise add to
@@ -85,34 +85,28 @@ app.get('/users/:user/clubs', async (request, response) => {
   } catch(e) {
     response.status(500).send(e);
   }
-})
+});
 
-// Update a single club
-app.put('/clubs/:club/even/:id', async (request, response) => {
+// Update a club
+app.put('/users/:user/clubs/:club/event/:event', async (request, response) => {
   try {
 
     // get the club id from the request param
-    const clubId = request.params.id;
+    const clubId = request.params.club;
     const userId = request.params.user;
+    const eventId = request.params.event;
 
-    // get the name/phone number from the request object body
-    const name = request.body.name;
-    const phoneNumber = request.body.phoneNumber;
-    const address = request.body.address;
+    if (!clubId) throw new Error('Club ID is required');
+    if (!userId) throw new Error('User ID is required');
+    if (!eventId) throw new Error('Event ID is required');
 
-    // check if any fields are missing
-    if (!clubId) throw new Error('ID is required');
-    if (!name) throw new Error('Name is required');
-    if (!phoneNumber) throw new Error('Phone number is required');
-    if (!address) throw new Error('Address is required');
-    if (!userId) throw new Error('UserID is required');
+    // Get the club info from the request body
+    const { name, coverImage, description, meetingInfo, website,
+            instagram, facebook, twitter, email, other } = request.body;
 
     // create the object to send to in the request to the server
-    const data = {
-      name,
-      phoneNumber,
-      address
-    };
+    const data = { name, coverImage, description, meetingInfo, website,
+              instagram, facebook, twitter, email, other }
 
     // reference the document in the nosql database so that you can update it
     await db.collection('users').doc(userId).collection('clubs').doc(clubId).set(data, { merge: true });
@@ -126,13 +120,13 @@ app.put('/clubs/:club/even/:id', async (request, response) => {
   } catch(e) {
     response.status(500).send(e);
   }
-})
+});
 
-// Delete a single club
-app.delete('/users/:user/clubs/:id', async (request, response) => {
+// Delete a club
+app.delete('/users/:user/clubs/:club', async (request, response) => {
   try {
     // Grab the club id from the url
-    const clubId = request.params.id;
+    const clubId = request.params.club;
     const userId = request.params.user;
 
     if (!clubId) throw new Error('ID is required');
