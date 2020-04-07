@@ -162,7 +162,7 @@ app.post('/users/:user/clubs/:club/events', async (request, response) => {
 
     // Create a new collection in the firestore db if needed, otherwise add to
     // the existing colleciton
-    const eventRef = await db.collection('users').doc(userId).collection('clubs').doc(clubID).collection('events').add(data);
+    const eventRef = await db.collection('users').doc(userId).collection('clubs').doc(clubId).collection('events').add(data);
     const event = await eventRef.get();
 
     // Show what the response will be
