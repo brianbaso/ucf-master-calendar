@@ -39,11 +39,11 @@ app.post('/users/:user/clubs', async (request, response) => {
             instagram, facebook, twitter, email, other } = request.body;
 
     const data = { name, coverImage, description, meetingInfo, website,
-              instagram, facebook, twitter, email, other }
+              instagram, facebook, twitter, email, other, userId }
 
     // Create a new collection in the firestore db if needed, otherwise add to
     // the existing colleciton
-    const clubRef = await db.collection('users').doc(userId).collection('clubs').add(data);
+    const clubRef = await db.collection('clubs').add(data);
     const club = await clubRef.get();
 
     // Show what the response will be
@@ -58,14 +58,11 @@ app.post('/users/:user/clubs', async (request, response) => {
 });
 
 // Get all clubs
-app.get('/users/:user/clubs', async (request, response) => {
+app.get('/clubs', async (request, response) => {
   try {
 
-    const userId = request.params.user;
-    if (!userId) throw new Error('User ID is required');
-
     // create a snapshot of the firestore db
-    const clubsQuerySnapshot = await db.collection('users').doc(userId).collection('clubs').get();
+    const clubsQuerySnapshot = await db.collection('clubs').get();
 
     // create an array for the clubs to go into
     const clubs:any[] = [];
@@ -104,10 +101,10 @@ app.put('/users/:user/clubs/:club', async (request, response) => {
 
     // create the object to send to in the request to the server
     const data = { name, coverImage, description, meetingInfo, website,
-              instagram, facebook, twitter, email, other }
+              instagram, facebook, twitter, email, other, userId }
 
     // reference the document in the nosql database so that you can update it
-    await db.collection('users').doc(userId).collection('clubs').doc(clubId).set(data, { merge: true });
+    await db.collection('clubs').doc(clubId).set(data, { merge: true });
 
     // return the confirmation that the document changed
     response.json({
@@ -131,7 +128,7 @@ app.delete('/users/:user/clubs/:club', async (request, response) => {
     if (!userId) throw new Error('User ID is required');
 
     // delete the document out of the clubs collection
-    await db.collection('users').doc(userId).collection('clubs').doc(clubId).delete();
+    await db.collection('clubs').doc(clubId).delete();
 
     // delete confirmation response
     response.json({
@@ -158,11 +155,11 @@ app.post('/users/:user/clubs/:club/events', async (request, response) => {
     // Get the event info from the request body
     const { title, description, startTime, endTime, location } = request.body;
 
-    const data = { title, description, startTime, endTime, location }
+    const data = { title, description, startTime, endTime, location, userId, clubId }
 
     // Create a new collection in the firestore db if needed, otherwise add to
     // the existing colleciton
-    const eventRef = await db.collection('users').doc(userId).collection('clubs').doc(clubId).collection('events').add(data);
+    const eventRef = await db.collection('events').add(data);
     const event = await eventRef.get();
 
     // Show what the response will be
@@ -177,19 +174,15 @@ app.post('/users/:user/clubs/:club/events', async (request, response) => {
 });
 
 // Get an event
-app.get('/users/:user/clubs/:club/events/:event', async (request, response) => {
+app.get('events/:event', async (request, response) => {
   try {
     // grab the id from the http request
     const eventId = request.params.event;
-    const clubId = request.params.club;
-    const userId = request.params.user;
 
-    if (!clubId) throw new Error('Club ID is required');
     if (!eventId) throw new Error('Event ID is required');
-    if (!userId) throw new Error('User ID is required');
 
     // reference the club in the clubs collection and set it to a const
-    const event = await db.collection('users').doc(userId).collection('clubs').doc(clubId).collection('events').doc(eventId).get();
+    const event = await db.collection('events').doc(eventId).get();
 
     if (!event.exists) {
       throw new Error ('Event does not exist');
@@ -207,17 +200,11 @@ app.get('/users/:user/clubs/:club/events/:event', async (request, response) => {
 });
 
 // Get all events
-app.get('/users/:user/clubs/:club/events', async (request, response) => {
+app.get('/events', async (request, response) => {
   try {
 
-    const clubId = request.params.club;
-    const userId = request.params.user;
-
-    if (!clubId) throw new Error('Club ID is required');
-    if (!userId) throw new Error('User ID is required');
-
     // create a snapshot of the firestore db
-    const eventsQuerySnapshot = await db.collection('users').doc(userId).collection('clubs').doc(clubId).collection('events').get();
+    const eventsQuerySnapshot = await db.collection('events').get();
 
     // create an array for the events to go into
     const events:any[] = [];
@@ -237,7 +224,7 @@ app.get('/users/:user/clubs/:club/events', async (request, response) => {
   } catch(e) {
     response.status(500).send(e);
   }
-})
+});
 
 // Update an event
 app.put('/users/:user/clubs/:club/event/:event', async (request, response) => {
@@ -255,10 +242,10 @@ app.put('/users/:user/clubs/:club/event/:event', async (request, response) => {
     // Get the event info from the request body
     const { title, description, startTime, endTime, location } = request.body;
 
-    const data = { title, description, startTime, endTime, location }
+    const data = { title, description, startTime, endTime, location, userId, clubId }
 
     // reference the document in the nosql database so that you can update it
-    await db.collection('users').doc(userId).collection('clubs').doc(clubId).collection('events').doc(eventId).set(data, { merge: true });
+    await db.collection('events').doc(eventId).set(data, { merge: true });
 
     // return the confirmation that the document changed
     response.json({
@@ -284,7 +271,7 @@ app.delete('/users/:user/clubs/:club/events/:event', async (request, response) =
     if (!eventId) throw new Error('Event ID is required');
 
     // delete the document out of the clubs collection
-    await db.collection('users').doc(userId).collection('clubs').doc(clubId).collection('events').doc(eventId).delete();
+    await db.collection('events').doc(eventId).delete();
 
     // delete confirmation response
     response.json({
