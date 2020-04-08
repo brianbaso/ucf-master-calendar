@@ -174,7 +174,7 @@ app.post('/users/:user/clubs/:club/events', async (request, response) => {
 });
 
 // Get an event
-app.get('events/:event', async (request, response) => {
+app.get('/events/:event', async (request, response) => {
   try {
     // grab the id from the http request
     const eventId = request.params.event;
@@ -227,7 +227,7 @@ app.get('/events', async (request, response) => {
 });
 
 // Update an event
-app.put('/users/:user/clubs/:club/event/:event', async (request, response) => {
+app.put('/users/:user/clubs/:club/events/:event', async (request, response) => {
   try {
 
     // get the club id from the request param
