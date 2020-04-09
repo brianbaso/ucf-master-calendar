@@ -28,15 +28,12 @@ export const webApi = functions.https.onRequest(main);
 
 // *** Routes for 'club' ***
 // Create a club
-app.post('/users/:user/clubs', async (request, response) => {
+app.post('/clubs', async (request, response) => {
   try {
-
-    const userId = request.params.user;
-    if (!userId) throw new Error('User ID is required');
 
     // Get the club info from the request body
     const { name, coverImage, description, meetingInfo, website,
-            instagram, facebook, twitter, email, other } = request.body;
+            instagram, facebook, twitter, email, other, userId } = request.body;
 
     const data = { name, coverImage, description, meetingInfo, website,
               instagram, facebook, twitter, email, other, userId }
@@ -85,19 +82,17 @@ app.get('/clubs', async (request, response) => {
 });
 
 // Update a club
-app.put('/users/:user/clubs/:club', async (request, response) => {
+app.put('/clubs/:club', async (request, response) => {
   try {
 
     // get the club id from the request param
     const clubId = request.params.club;
-    const userId = request.params.user;
 
     if (!clubId) throw new Error('Club ID is required');
-    if (!userId) throw new Error('User ID is required');
 
     // Get the club info from the request body
     const { name, coverImage, description, meetingInfo, website,
-            instagram, facebook, twitter, email, other } = request.body;
+            instagram, facebook, twitter, email, other, userId } = request.body;
 
     // create the object to send to in the request to the server
     const data = { name, coverImage, description, meetingInfo, website,
@@ -118,14 +113,12 @@ app.put('/users/:user/clubs/:club', async (request, response) => {
 });
 
 // Delete a club
-app.delete('/users/:user/clubs/:club', async (request, response) => {
+app.delete('/clubs/:club', async (request, response) => {
   try {
     // Grab the club id from the url
     const clubId = request.params.club;
-    const userId = request.params.user;
 
     if (!clubId) throw new Error('ID is required');
-    if (!userId) throw new Error('User ID is required');
 
     // delete the document out of the clubs collection
     await db.collection('clubs').doc(clubId).delete();
@@ -143,19 +136,13 @@ app.delete('/users/:user/clubs/:club', async (request, response) => {
 
 // *** Routes for 'event' ***
 // Create an event
-app.post('/users/:user/clubs/:club/events', async (request, response) => {
+app.post('/events', async (request, response) => {
   try {
 
-    const userId = request.params.user;
-    const clubId = request.params.club;
-
-    if (!userId) throw new Error('User ID is required');
-    if (!clubId) throw new Error('Club ID is required');
-
     // Get the event info from the request body
-    const { title, description, startTime, endTime, location } = request.body;
+    const { title, description, startTime, endTime, location, userId, clubId } = request.body;
 
-    const data = { title, description, startTime, endTime, location, userId, clubId }
+    const data = { title, description, startTime, endTime, location, userId, clubId };
 
     // Create a new collection in the firestore db if needed, otherwise add to
     // the existing colleciton
@@ -174,7 +161,7 @@ app.post('/users/:user/clubs/:club/events', async (request, response) => {
 });
 
 // Get an event
-app.get('events/:event', async (request, response) => {
+app.get('/events/:event', async (request, response) => {
   try {
     // grab the id from the http request
     const eventId = request.params.event;
@@ -227,20 +214,16 @@ app.get('/events', async (request, response) => {
 });
 
 // Update an event
-app.put('/users/:user/clubs/:club/event/:event', async (request, response) => {
+app.put('/events/:event', async (request, response) => {
   try {
 
     // get the club id from the request param
-    const clubId = request.params.club;
-    const userId = request.params.user;
     const eventId = request.params.event;
 
-    if (!clubId) throw new Error('Club ID is required');
-    if (!userId) throw new Error('User ID is required');
     if (!eventId) throw new Error('Event ID is required');
 
     // Get the event info from the request body
-    const { title, description, startTime, endTime, location } = request.body;
+    const { title, description, startTime, endTime, location, clubId, userId } = request.body;
 
     const data = { title, description, startTime, endTime, location, userId, clubId }
 
@@ -259,15 +242,11 @@ app.put('/users/:user/clubs/:club/event/:event', async (request, response) => {
 });
 
 // Delete an event
-app.delete('/users/:user/clubs/:club/events/:event', async (request, response) => {
+app.delete('/events/:event', async (request, response) => {
   try {
     // Grab the club id from the url
-    const clubId = request.params.club;
-    const userId = request.params.user;
     const eventId = request.params.event;
 
-    if (!clubId) throw new Error('ID is required');
-    if (!userId) throw new Error('User ID is required');
     if (!eventId) throw new Error('Event ID is required');
 
     // delete the document out of the clubs collection
