@@ -81,6 +81,32 @@ app.get('/clubs', async (request, response) => {
   }
 });
 
+// Get a club
+app.get('/clubs/:club', async (request, response) => {
+  try {
+    // grab the id from the http request
+    const clubId = request.params.club;
+
+    if (!clubId) throw new Error('Club ID is required');
+
+    // reference the club in the clubs collection and set it to a const
+    const club = await db.collection('clubs').doc(clubId).get();
+
+    if (!club.exists) {
+      throw new Error ('Club does not exist');
+    }
+
+    // return the club to the client
+    response.json({
+      id: club.id,
+      data: club.data()
+    });
+
+  } catch(e) {
+    response.status(500).send(e);
+  }
+});
+
 // Update a club
 app.put('/clubs/:club', async (request, response) => {
   try {
