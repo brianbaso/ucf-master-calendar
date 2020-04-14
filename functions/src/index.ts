@@ -29,6 +29,7 @@ export const webApi = functions.https.onRequest(main);
 // *** Routes for 'club' ***
 // Create a club
 app.post('/clubs', async (request, response) => {
+  response.set('Access-Control-Allow-Origin', '*');
   try {
 
     // Get the club info from the request body
@@ -56,6 +57,7 @@ app.post('/clubs', async (request, response) => {
 
 // Get all clubs
 app.get('/clubs', async (request, response) => {
+  response.set('Access-Control-Allow-Origin', '*');
   try {
 
     // create a snapshot of the firestore db
@@ -83,6 +85,7 @@ app.get('/clubs', async (request, response) => {
 
 // Get a club
 app.get('/clubs/:club', async (request, response) => {
+  response.set('Access-Control-Allow-Origin', '*');
   try {
     // grab the id from the http request
     const clubId = request.params.club;
@@ -109,6 +112,7 @@ app.get('/clubs/:club', async (request, response) => {
 
 // Update a club
 app.put('/clubs/:club', async (request, response) => {
+  response.set('Access-Control-Allow-Origin', '*');
   try {
 
     // get the club id from the request param
@@ -140,6 +144,7 @@ app.put('/clubs/:club', async (request, response) => {
 
 // Delete a club
 app.delete('/clubs/:club', async (request, response) => {
+  response.set('Access-Control-Allow-Origin', '*');
   try {
     // Grab the club id from the url
     const clubId = request.params.club;
@@ -163,6 +168,7 @@ app.delete('/clubs/:club', async (request, response) => {
 // *** Routes for 'event' ***
 // Create an event
 app.post('/events', async (request, response) => {
+  response.set('Access-Control-Allow-Origin', '*');
   try {
 
     // Get the event info from the request body
@@ -188,6 +194,7 @@ app.post('/events', async (request, response) => {
 
 // Get an event
 app.get('/events/:event', async (request, response) => {
+  response.set('Access-Control-Allow-Origin', '*');
   try {
     // grab the id from the http request
     const eventId = request.params.event;
@@ -214,6 +221,9 @@ app.get('/events/:event', async (request, response) => {
 
 // Get all events
 app.get('/events', async (request, response) => {
+
+  response.set('Access-Control-Allow-Origin', '*');
+
   try {
 
     // create a snapshot of the firestore db
@@ -241,6 +251,9 @@ app.get('/events', async (request, response) => {
 
 // Update an event
 app.put('/events/:event', async (request, response) => {
+
+  response.set('Access-Control-Allow-Origin', '*');
+
   try {
 
     // get the club id from the request param
@@ -269,6 +282,9 @@ app.put('/events/:event', async (request, response) => {
 
 // Delete an event
 app.delete('/events/:event', async (request, response) => {
+
+  response.set('Access-Control-Allow-Origin', '*');
+
   try {
     // Grab the club id from the url
     const eventId = request.params.event;
